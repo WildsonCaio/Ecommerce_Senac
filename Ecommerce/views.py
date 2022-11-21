@@ -22,6 +22,21 @@ def cart(request):
   
     return render(request, 'pages/cart.html', {'cart_item':cart_item, 'total':total['product__value__sum']})    
 
-def add_cart(request, product):
-    Cart.objects.create(user_id=request.user.id, product_id=product)
-    return redirect ('home')
+def add_cart(request, id):
+    owner_cart = Cart.objects.filter(user_id=request.user.id)
+    get_product = get_object_or_404(Products,id=id)
+
+    if owner_cart:
+        owner_cart = get_object_or_404(Cart, user_id=request.user.id)
+        owner_cart.product.add(get_product)
+    else:
+        create_cart = Cart.objects.create(user_id=request.user.id)
+        create_cart.product.add(get_product)
+        owner_cart = create_cart
+    
+
+  
+    cart_item = owner_cart.product
+    products = Products.objects.all()
+    categories = Category.objects.all().order_by('name')
+    return render(request, 'pages/cart_item.html', {'products':products, 'cart_item':cart_item, 'categories':categories})

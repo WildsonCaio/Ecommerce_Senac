@@ -27,7 +27,7 @@ class Products(models.Model):
 
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)      
-    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    product = models.ManyToManyField(Products)
 
     def __str__(self):
         return self.user.username
